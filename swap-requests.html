@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Swap Requests | Skill Swap Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#1e1f22] text-white font-inter min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-[#2b2d31] px-6 py-4 flex justify-between items-center shadow mb-6">
+    <h1 class="font-bold text-xl">Skill Swap Platform</h1>
+    <nav class="flex gap-4 items-center">
+      <a href="Homepage.html" class="text-[#b5bac1] hover:text-[#7289da] px-3 py-2 transition">Home</a>
+      <img src="profile.jpg" alt="Profile" class="w-10 h-10 rounded-full border border-[#3f4147]" />
+    </nav>
+  </header>
+
+  <!-- Filters -->
+  <div class="flex flex-col sm:flex-row justify-between gap-4 items-center mb-6">
+    <select id="statusFilter" onchange="renderRequests()" class="bg-[#2b2d31] text-white border border-[#3f4147] p-2 rounded">
+      <option value="All">All</option>
+      <option value="Pending">Pending</option>
+      <option value="Accepted">Accepted</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+
+    <div class="flex gap-2 w-full sm:w-auto">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by name..."
+        class="bg-[#232428] text-white border border-[#3f4147] p-2 rounded w-full sm:w-64"
+      />
+      <button onclick="renderRequests()" class="bg-[#7289da] hover:bg-[#5865f2] px-4 rounded transition">
+        Search
+      </button>
+    </div>
+  </div>
+
+  <!-- Requests List -->
+  <div id="requestList" class="space-y-6"></div>
+
+  <!-- Pagination Placeholder (can add dynamic pagination if needed) -->
+  <div class="text-center mt-8 text-[#b5bac1]">
+    <div class="inline-flex gap-2">
+      <span class="cursor-pointer hover:text-[#7289da]">&lt;</span>
+      <span class="font-bold">1</span>
+      <span class="cursor-pointer hover:text-[#7289da]">2</span>
+      <span class="cursor-pointer hover:text-[#7289da]">3</span>
+      <span class="cursor-pointer hover:text-[#7289da]">&gt;</span>
+    </div>
+  </div>
+
+  <!-- JavaScript Section -->
+  <script>
+    // Dummy swap request data
+    let swapRequests = [
+      {
+        name: "Marc Demo",
+        photo: "profile.jpg",
+        skillsOffered: ["JavaScript"],
+        skillsWanted: ["Photoshop"],
+        rating: 3.9,
+        status: "Pending"
+      },
+      {
+        name: "Jane User",
+        photo: "profile.jpg",
+        skillsOffered: ["Python"],
+        skillsWanted: ["UI Design"],
+        rating: 4.2,
+        status: "Rejected"
+      }
+    ];
+
+    // Render the requests based on filters
+    function renderRequests() {
+      const listContainer = document.getElementById("requestList");
+      listContainer.innerHTML = "";
+
+      const statusFilter = document.getElementById("statusFilter").value;
+      const searchText = document.getElementById("searchInput").value.toLowerCase();
+
+      const filtered = swapRequests.filter(req => {
+        const statusMatch = statusFilter === "All" || req.status === statusFilter;
+        const searchMatch = req.name.toLowerCase().includes(searchText);
+        return statusMatch && searchMatch;
+      });
+
+      filtered.forEach((req, index) => {
+        const card = document.createElement("div");
+        card.className = `
+          bg-[#2b2d31] border border-[#3f4147] p-4 rounded-lg flex flex-col md:flex-row justify-between gap-4 items-start md:items-center shadow transition`;
+
+        card.innerHTML = `
+          <div class="flex items-center gap-4">
+            <img src="${req.photo}" alt="Profile Photo" class="w-16 h-16 rounded-full border border-gray-600" />
+            <div>
+              <h2 class="font-semibold text-lg">${req.name}</h2>
+              <p><span class="text-green-400">Skills Offered:</span> ${req.skillsOffered.join(", ")}</p>
+              <p><span class="text-blue-400">Skills Wanted:</span> ${req.skillsWanted.join(", ")}</p>
+              <p class="text-yellow-300 text-sm">Rating: ${req.rating}/5</p>
+            </div>
+          </div>
+          <div class="text-right space-y-2">
+            <p class="text-sm">Status:
+              <span class="${
+                req.status === "Pending" ? "text-yellow-400" :
+                req.status === "Accepted" ? "text-green-400" :
+                "text-red-400"
+              } font-semibold">${req.status}</span>
+            </p>
+            ${
+              req.status === "Pending" ? `
+              <div class="flex gap-2 text-sm">
+                <button onclick="updateStatus(${index}, 'Accepted')" class="text-green-400 hover:underline">Accept</button>
+                <button onclick="updateStatus(${index}, 'Rejected')" class="text-red-400 hover:underline">Reject</button>
+              </div>` : ""
+            }
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<p class="text-center text-[#b5bac1]">No requests found.</p>`;
+      }
+    }
+
+    // Update the status of a request
+    function updateStatus(index, newStatus) {
+      swapRequests[index].status = newStatus;
+      renderRequests();
+    }
+
+    // Initial load
+    renderRequests();
+  </script>
+
+</body>
+</html>
+

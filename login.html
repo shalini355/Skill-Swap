@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | Skill Swap Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#1e1f22] text-white font-sans min-h-screen flex flex-col">
+
+  <!-- Top Navbar -->
+  <nav class="bg-[#2b2d31] w-full py-4 px-6 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold text-white">Skill Swap Platform</h1>
+    <a href="Homepage.html" class="bg-[#5865f2] hover:bg-[#7289da] px-4 py-2 rounded-full font-semibold transition">
+      Home
+    </a>
+  </nav>
+
+  <!-- Login Form Container -->
+  <div class="flex-grow flex items-center justify-center p-4">
+    <div class="bg-[#2b2d31] p-8 sm:p-10 rounded-lg shadow-lg w-full max-w-md border border-[#3f4147]">
+
+      <h2 class="text-2xl font-bold mb-6 text-center text-white">Login</h2>
+
+      <!-- Login Form -->
+      <form onsubmit="handleLogin(event)" class="space-y-5">
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block mb-1 text-sm font-medium">Email</label>
+          <input
+            type="email"
+            id="email"
+            required
+            placeholder="you@example.com"
+            class="w-full px-4 py-2 rounded bg-[#232428] border border-[#3f4147] text-[#b5bac1] placeholder:text-[#777] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+          />
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="block mb-1 text-sm font-medium">Password</label>
+          <input
+            type="password"
+            id="password"
+            required
+            placeholder="••••••••"
+            class="w-full px-4 py-2 rounded bg-[#232428] border border-[#3f4147] text-[#b5bac1] placeholder:text-[#777] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full bg-[#7289da] hover:bg-[#5865f2] py-2 rounded font-semibold transition">
+          Login
+        </button>
+
+        <!-- Links -->
+        <div class="text-sm text-blue-400 text-center mt-2">
+          <a href="#" class="hover:underline">Forgot username/password?</a>
+        </div>
+        <div class="text-sm text-blue-400 text-center mt-2">
+          <a href="register.html" class="hover:underline">Don't have an account? Register</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function handleLogin(event) {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      // Mock login logic
+      if (email === "test@example.com" && password === "123456") {
+        localStorage.setItem("token", "mock-jwt-token");
+        alert("Login successful!");
+        window.location.href = "Homepage.html";
+      } else {
+        alert("Invalid credentials!");
+      }
+    }
+  </script>
+
+</body>
+</html>
+

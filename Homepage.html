@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Skill Swap Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#1e1f22] text-white min-h-screen p-4 font-sans">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center mb-8 bg-[#2b2d31] p-4 rounded-lg shadow-md">
+    <h1 class="text-2xl sm:text-3xl font-bold text-white">Skill Swap Platform</h1>
+    <!-- Login button -->
+    <a id="loginBtn" href="login.html" class="bg-[#7289da] hover:bg-[#5865f2] text-white px-4 py-2 rounded font-semibold shadow transition">Login</a>
+    <!-- Profile section -->
+    <div id="profileSection" class="hidden flex items-center gap-2">
+      <div 
+        class="w-8 h-8 rounded-full bg-[#7289da] flex items-center justify-center text-white font-bold text-lg select-none cursor-pointer"
+        onclick="window.location.href='user-profile.html';"
+      >
+        <span id="profileChar">U</span>
+      </div>
+      <span id="profileName" class="text-white font-semibold"></span>
+      <a href="logout.html" class="ml-2 text-[#b5bac1] hover:text-[#7289da] text-sm">Logout</a>
+    </div>
+  </header>
+
+  <!-- Filters -->
+  <div class="flex flex-col sm:flex-row gap-4 mb-8">
+    <select id="availabilityFilter" class="bg-[#2b2d31] border border-[#3f4147] p-2 rounded text-white w-full sm:w-48">
+      <option value="">Availability</option>
+      <option value="weekends">Weekends</option>
+      <option value="evenings">Evenings</option>
+    </select>
+
+    <input
+      type="text"
+      placeholder="Search skill..."
+      id="searchInput"
+      class="bg-[#2b2d31] border border-[#3f4147] p-2 rounded text-white flex-1"
+    />
+
+    <button onclick="loadUsers()" class="bg-[#5865f2] hover:bg-[#7289da] px-6 py-2 rounded font-semibold transition text-white">
+      Search
+    </button>
+  </div>
+
+  <!-- Users Section -->
+  <div id="userList" class="space-y-6"></div>
+
+  <!-- Pagination -->
+  <div id="pagination" class="flex justify-center gap-2 mt-8"></div>
+
+  <!-- JS Code -->
+  <script>
+    const dummyUsers = [
+      {
+        id: 1,
+        name: "Marc Demo",
+        profilePhoto: "https://via.placeholder.com/64x64",
+        skillsOffered: ["JavaScript", "Python"],
+        skillsWanted: ["Animation", "Graphic Designer"],
+        rating: 3.9,
+      },
+      {
+        id: 2,
+        name: "Michell",
+        profilePhoto: "https://via.placeholder.com/64x64",
+        skillsOffered: ["JavaScript", "Python"],
+        skillsWanted: ["Animation", "Graphic Designer"],
+        rating: 2.5,
+      },
+      {
+        id: 3,
+        name: "Joe Wills",
+        profilePhoto: "https://via.placeholder.com/64x64",
+        skillsOffered: ["JavaScript", "Python"],
+        skillsWanted: ["Animation", "Graphic Designer"],
+        rating: 4.0,
+      },
+    ];
+
+    const USERS_PER_PAGE = 2;
+    let currentPage = 1;
+
+    function loadUsers() {
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const availability = document.getElementById("availabilityFilter").value;
+
+      const filtered = dummyUsers.filter((user) => {
+        return user.skillsOffered.some((s) =>
+          s.toLowerCase().includes(search)
+        );
+      });
+
+      const start = (currentPage - 1) * USERS_PER_PAGE;
+      const end = start + USERS_PER_PAGE;
+      const pagedUsers = filtered.slice(start, end);
+
+      const userList = document.getElementById("userList");
+      userList.innerHTML = "";
+
+      pagedUsers.forEach((user) => {
+        const card = document.createElement("div");
+        card.className = `
+          bg-[#2b2d31] text-white p-5 rounded-xl border border-[#3f4147] 
+          flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 
+          hover:shadow-xl hover:shadow-[#5865f280] transition-all duration-300
+        `;
+
+        card.innerHTML = `
+          <div class="flex items-center gap-4">
+            <img src="${user.profilePhoto}" class="w-16 h-16 rounded-full border-2 border-[#5865f2]" />
+            <div>
+              <h2 class="text-lg font-bold">${user.name}</h2>
+              <p class="text-sm text-[#43b581] mt-1">Skills Offered: ${user.skillsOffered.join(", ")}</p>
+              <p class="text-sm text-[#00b0f4]">Skills Wanted: ${user.skillsWanted.join(", ")}</p>
+              <p class="text-sm mt-1">⭐ Rating: ${user.rating}/5</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <button class="bg-[#5865f2] hover:bg-[#7289da] px-5 py-2 mt-2 sm:mt-0 rounded-full font-semibold transition text-white"
+              onclick="handleRequest(${user.id})">
+              Request
+            </button>
+          </div>
+        `;
+
+        userList.appendChild(card);
+      });
+
+      renderPagination(filtered.length);
+    }
+
+    function renderPagination(totalUsers) {
+      const pagination = document.getElementById("pagination");
+      pagination.innerHTML = "";
+      const totalPages = Math.ceil(totalUsers / USERS_PER_PAGE);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.className = `px-3 py-1 rounded-full text-white font-medium ${
+          i === currentPage ? "bg-[#7289da]" : "bg-[#3f4147] hover:bg-[#5865f2]"
+        }`;
+        btn.innerText = i;
+        btn.onclick = () => {
+          currentPage = i;
+          loadUsers();
+        };
+        pagination.appendChild(btn);
+      }
+    }
+
+    function handleRequest(userId) {
+      const isLoggedIn = !!localStorage.getItem("token");
+      if (!isLoggedIn) {
+        alert("Please login or register to send a request.");
+        window.location.href = "login.html";
+      } else {
+        alert("Request sent to user ID: " + userId);
+      }
+    }
+
+    window.onload = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Example user data (replace with real user info from backend)
+  const user = { name: "Shalini Yadav" };
+
+  // Show/hide login/profile
+  document.getElementById("loginBtn").style.display = "none";
+  document.getElementById("profileSection").style.display = "flex";
+  document.getElementById("profileName").textContent = user.name;
+  document.getElementById("profileChar").textContent = user.name[0];
+
+  // Load users after login check
+  loadUsers();
+};
+
+
+    // Example user data (replace with actual data from backend)
+    const user = localStorage.getItem("token") 
+      ? { name: "Shalini Yadav" } 
+      : null;
+
+    if (user) {
+      document.getElementById("loginBtn").style.display = "none";
+      document.getElementById("profileSection").style.display = "flex";
+      document.getElementById("profileName").textContent = user.name;
+      document.getElementById("profileChar").textContent = user.name[0];
+    }
+
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

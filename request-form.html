@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Send Swap Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#1e1f22] text-white font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-[#2b2d31] px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="font-bold text-xl">Skill Swap Platform</h1>
+    <nav class="flex gap-4">
+      <a href="Homepage.html"
+         class="bg-[#7289da] hover:bg-[#5865f2] text-white px-4 py-2 rounded font-semibold shadow transition">
+        Home
+      </a>
+    </nav>
+  </header>
+
+  <!-- Main Form Section -->
+  <main class="p-6">
+    <div class="bg-[#2b2d31] rounded-lg shadow-lg border border-[#3f4147] p-6 max-w-xl mx-auto">
+
+      <h2 class="text-2xl font-bold mb-6 text-white text-center">Send Swap Request</h2>
+
+      <form id="swapForm" onsubmit="handleSubmit(event)" class="space-y-5">
+        <!-- Your Offered Skill -->
+        <div>
+          <label for="mySkill" class="block mb-1 text-sm">Choose one of your offered skills</label>
+          <select id="mySkill" required class="w-full p-2 rounded bg-gray-700 text-white">
+            <!-- Populated by JS -->
+          </select>
+        </div>
+
+        <!-- Their Wanted Skill -->
+        <div>
+          <label for="theirSkill" class="block mb-1 text-sm">Choose one of their wanted skills</label>
+          <select id="theirSkill" required class="w-full p-2 rounded bg-gray-700 text-white">
+            <!-- Populated by JS -->
+          </select>
+        </div>
+
+        <!-- Optional Message -->
+        <div>
+          <label for="message" class="block mb-1 text-sm">Message</label>
+          <textarea
+            id="message"
+            rows="4"
+            class="w-full p-2 rounded bg-gray-700 text-white resize-none"
+            placeholder="Write something optional..."></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+                class="w-full bg-[#7289da] hover:bg-[#5865f2] py-2 rounded font-semibold shadow transition">
+          Submit
+        </button>
+      </form>
+
+      <!-- Success Message -->
+      <div id="successMessage"
+           class="hidden mt-4 bg-green-600 text-white text-center p-3 rounded shadow">
+        ✅ Swap request submitted successfully!
+      </div>
+
+    </div>
+  </main>
+
+  <!-- JavaScript -->
+  <script>
+    // Dummy skills (can be replaced with real data)
+    const currentUserSkills = ["JavaScript", "Python", "Node.js"];
+    const targetUserWantedSkills = ["Animation", "Graphic Designer", "UI Design"];
+    const targetUser = "Marc Demo";
+
+    // Populate dropdowns
+    function populateOptions(id, list) {
+      const select = document.getElementById(id);
+      list.forEach(skill => {
+        const option = document.createElement("option");
+        option.value = skill;
+        option.textContent = skill;
+        select.appendChild(option);
+      });
+    }
+
+    populateOptions("mySkill", currentUserSkills);
+    populateOptions("theirSkill", targetUserWantedSkills);
+
+    // Handle form submission
+    function handleSubmit(e) {
+      e.preventDefault();
+
+      const offered = document.getElementById("mySkill").value;
+      const wanted = document.getElementById("theirSkill").value;
+      const message = document.getElementById("message").value;
+
+      const payload = {
+        to: targetUser,
+        from: "CurrentUser",
+        offeredSkill: offered,
+        wantedSkill: wanted,
+        message: message,
+        date: new Date().toISOString()
+      };
+
+      console.log("Sending request:", payload);
+
+      // Show success message
+      document.getElementById("successMessage").classList.remove("hidden");
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        window.location.href = "swap-requests.html";
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>
+
